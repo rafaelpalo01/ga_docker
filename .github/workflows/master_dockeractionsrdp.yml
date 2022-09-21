@@ -1,0 +1,51 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy container app to Azure Web App - dockeractionsrdp
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Log in to registry
+      uses: docker/login-action@v1
+      with:
+        registry: https://dockeractionrdp.azurecr.io/
+        username: ${{ secrets.AzureAppService_ContainerUsername_ba6a812b2bd645cba8cf9959f10d95a0 }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_3a060e2161f04e1090d2a77f31b726dd }}
+
+    - name: Build and push container image to registry
+      uses: docker/build-push-action@v2
+      with:
+        push: true
+        tags: dockeractionrdp.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_ba6a812b2bd645cba8cf9959f10d95a0 }}/gadocker:${{ github.sha }}
+        file: ./Dockerfile
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+    - name: Deploy to Azure Web App
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'dockeractionsrdp'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_0e17e9907d8f44a6a5768da139d6c18e }}
+        images: 'dockeractionrdp.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_ba6a812b2bd645cba8cf9959f10d95a0 }}/gadocker:${{ github.sha }}'
