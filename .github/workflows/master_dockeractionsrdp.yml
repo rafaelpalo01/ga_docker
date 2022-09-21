@@ -23,14 +23,14 @@ jobs:
       uses: docker/login-action@v1
       with:
         registry: https://dockeractionrdp.azurecr.io/
-        username: ${{ secrets.AzureAppService_ContainerUsername_ba6a812b2bd645cba8cf9959f10d95a0 }}
-        password: ${{ secrets.AzureAppService_ContainerPassword_3a060e2161f04e1090d2a77f31b726dd }}
+        username: ${{ secrets.AzureAppService_ContainerUsername_39a903310b55446cb1709879fd097dbd }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_61e3c50bda1a4287b535a7b0dee7b599 }}
 
     - name: Build and push container image to registry
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: dockeractionrdp.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_ba6a812b2bd645cba8cf9959f10d95a0 }}/gadocker:${{ github.sha }}
+        tags: dockeractionrdp.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_39a903310b55446cb1709879fd097dbd }}/gadocker:${{ github.sha }}
         file: ./Dockerfile
 
   deploy:
@@ -47,5 +47,5 @@ jobs:
       with:
         app-name: 'dockeractionsrdp'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_0e17e9907d8f44a6a5768da139d6c18e }}
-        images: 'dockeractionrdp.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_ba6a812b2bd645cba8cf9959f10d95a0 }}/gadocker:${{ github.sha }}'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_9f10b87c8ddf401596b1699fa050e077 }}
+        images: 'dockeractionrdp.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_39a903310b55446cb1709879fd097dbd }}/gadocker:${{ github.sha }}'
